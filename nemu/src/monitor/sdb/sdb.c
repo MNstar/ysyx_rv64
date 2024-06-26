@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include "memory/paddr.h"
 
 static int is_batch_mode = false;
 
@@ -47,8 +48,61 @@ static int cmd_c(char *args) {
   return 0;
 }
 
+static int cmd_si(char *args) {
+  int step = 0;
+  if (args == NULL) step = 1;
+  else {
+    sscanf(args, "%d", &step);
+  }
+  cpu_exec(1);
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  if (strcmp(args, "r") == 0) {
+    isa_reg_display();
+  }
+  else if (strcmp(args, "w") == 0) {
+    printf("Print the info of watchpoint\n");
+  }
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  // printf("%s\n", args);
+  int n;
+  uint64_t addr;
+  char *first_c = strtok(args, " ");
+  char *addr_c = strtok(NULL, " ");
+  sscanf(first_c, "%d", &n);
+  sscanf(addr_c, "%lx", &addr);
+  for (int i = 0; i < n; i++) {
+    printf("%#lx\n", paddr_read(addr, 4));
+    addr += 4;
+  }
+
+  // printf("%d\n", n);
+  // printf("%#x\n", addr);
+
+
+  return 0;
+}
+
+static int cmd_p(char *args) {
+  printf("%s\n", args);
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  return 0;
+}
+
+static int cmd_w(char *args) {
+  return 0;
+}
 
 static int cmd_q(char *args) {
+  nemu_state.state = NEMU_QUIT;
   return -1;
 }
 
@@ -62,6 +116,13 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  {"si", "One Step to Exec", cmd_si},
+  {"x", "Scan the Mem", cmd_x},
+  {"info", "Print the Regs", cmd_info},
+  {"p", "Calu the Expr", cmd_p},
+  {"d", "Delete the Watchpoint", cmd_d},
+  {"w", "Set the Watchpoint", cmd_w}
+
 
   /* TODO: Add more commands */
 
