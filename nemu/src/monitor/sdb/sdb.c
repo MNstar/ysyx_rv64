@@ -60,7 +60,7 @@ static int cmd_si(char *args) {
   else {
     sscanf(args, "%d", &step);
   }
-  cpu_exec(1);
+  cpu_exec(step);
   return 0;
 }
 

@@ -100,8 +100,8 @@ static int parse_args(int argc, char *argv[]) {
 
 void init_monitor(int argc, char *argv[]) {
   /* Perform some global initialization. */
-
   /* Parse arguments. */
+  
   parse_args(argc, argv);
 
   /* Set random seed. */
@@ -112,7 +112,6 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize memory. */
   init_mem();
-
   /* Initialize devices. */
   IFDEF(CONFIG_DEVICE, init_device());
 
